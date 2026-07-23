@@ -1,0 +1,9 @@
+Who developed Java?|A) Microsoft|B) Sun Microsystems|C) Apple|D) Google|B
+
+Which keyword is used to access parent class variables and methods in Java?|A) this|B) parent|C) extends|D) super|D
+
+What is the latest Java LTS version?|A) Java 21|B) Java 17|C) Java 22|D) Java 8|A
+
+What is a String in Java?|A) An Interface|B) A keyword|C) A class used to store a sequence of characters|D) A primitive data type|C
+
+An interface can extend a class.|A) False|B) True|C) Depends on Java version|D) None of the above|A
