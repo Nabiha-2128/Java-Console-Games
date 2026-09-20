@@ -1,84 +1,50 @@
 package service;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-
-import model.Game;
-import model.Player;
-import model.Question;
+import java.util.Collections;
+import model.*;
 import repository.QuestionRepository;
-import util.InvalidChoiceException;
+import util.*;
 
 public class QuizService extends Game {
-
-    Scanner sc = new Scanner(System.in);
-
-    @Override
-    public void startGame() {
-
-        System.out.println("\n==================================");
-        System.out.println("      WELCOME TO QUIZ BATTLE");
-        System.out.println("==================================");
-
-        System.out.print("Enter Player Name: ");
-        String name = sc.nextLine();
-
-        Player player = new Player(name);
-
-        QuestionRepository repository = new QuestionRepository();
-        ArrayList<Question> questions = repository.getQuestions();
-
-        for (Question q : questions) {
-
-            System.out.println("\n" + q.getQuestion());
-            System.out.println("A. " + q.getOptionA());
-            System.out.println("B. " + q.getOptionB());
-            System.out.println("C. " + q.getOptionC());
-            System.out.println("D. " + q.getOptionD());
-
-            try {
-
-                System.out.print("Enter your answer (A/B/C/D): ");
-                char answer = Character.toUpperCase(sc.next().charAt(0));
-
-                if (answer != 'A' && answer != 'B' &&
-                    answer != 'C' && answer != 'D') {
-
-                    throw new InvalidChoiceException(
-                        "Invalid Choice! Please enter only A, B, C or D."
-                    );
+    private final int timeOverride;
+    public QuizService() { this(0); }
+    public QuizService(int timeOverride) { this.timeOverride = timeOverride; }
+    @Override public void startGame() {
+        ConsoleInput input = ConsoleInput.getInstance();
+        System.out.println("\nWELCOME TO QUIZ BATTLE");
+        Player player = new Player(input.readName("Enter Player Name: "));
+        int level = input.readInt("Difficulty: 1 Easy | 2 Medium | 3 Hard: ", 1, 3);
+        String difficulty = new String[]{"EASY", "MEDIUM", "HARD"}[level - 1];
+        ArrayList<Question> questions = new QuestionRepository().getQuestions(difficulty);
+        if (questions.isEmpty()) { System.out.println("No questions available for " + difficulty + ". Check data/questions.txt."); return; }
+        Collections.shuffle(questions);
+        int seconds = timeOverride > 0 ? timeOverride : new int[]{90, 75, 60}[level - 1];
+        System.out.println("Answer " + questions.size() + " questions in " + seconds + " seconds. +1 per correct answer. Q returns to menu.");
+        int answered = 0;
+        try (GameTimer timer = new GameTimer(seconds)) {
+            for (Question q : questions) {
+                if (!timer.isActive()) break;
+                System.out.println("\n" + q.getQuestion() + "\nA. " + q.getOptionA() + "\nB. " + q.getOptionB()
+                    + "\nC. " + q.getOptionC() + "\nD. " + q.getOptionD());
+                while (timer.isActive()) {
+                    String raw = input.readWhile("Answer (A/B/C/D or Q): ", timer::isActive);
+                    if (raw == null) break;
+                    if (raw.equalsIgnoreCase("q")) { System.out.println("Quiz cancelled. Score: " + player.getScore()); return; }
+                    try {
+                        char answer = Validation.answer(raw);
+                        answered++;
+                        if (answer == q.getCorrectAnswer()) { player.increaseScore(); System.out.println("Correct Answer!"); }
+                        else System.out.println("Wrong Answer! Correct answer: " + q.getCorrectAnswer());
+                        break;
+                    } catch (InvalidChoiceException e) { System.out.println(e.getMessage()); }
                 }
-
-                if (answer == q.getCorrectAnswer()) {
-                    System.out.println("Correct Answer!");
-                    player.increaseScore();
-                } else {
-                    System.out.println("Wrong Answer!");
-                    System.out.println("Correct Answer : " + q.getCorrectAnswer());
-                }
-
-            } catch (InvalidChoiceException e) {
-
-                System.out.println(e.getMessage());
-
             }
-
+            System.out.println(answered == questions.size() ? "Quiz completed!" : "Time is up!");
         }
-
-        System.out.println("\n==================================");
-        System.out.println("Quiz Completed!");
-        System.out.println("Player Name : " + player.getName());
-        System.out.println("Final Score : " + player.getScore()
-                           + " / " + questions.size());
-
-        if (player.getScore() >= 4) {
-            System.out.println("Excellent Performance!");
-        } else if (player.getScore() >= 2) {
-            System.out.println("Good Job!");
-        } else {
-            System.out.println("Better Luck Next Time!");
-        }
-
-        System.out.println("==================================");
+        System.out.println("Player: " + player.getName() + " | Answered: " + answered + "/" + questions.size());
+        System.out.println("Final Score: " + player.getScore() + " / " + questions.size());
+        double ratio = (double) player.getScore() / questions.size();
+        System.out.println(ratio >= 0.8 ? "Excellent Performance!" : ratio >= 0.4 ? "Good Job!" : "Keep practising!");
     }
 }

@@ -1,69 +1,24 @@
 package menu;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
-
-import service.QuizService;
+import model.Game;
+import service.*;
+import util.ConsoleInput;
 
 public class Menu {
-
-    Scanner sc = new Scanner(System.in);
-
+    private final ConsoleInput input = ConsoleInput.getInstance();
     public void displayMenu() {
-
-        while (true) {
-
-            try {
-
-                System.out.println("\n================================");
-                System.out.println("     JAVA GAME COLLECTION");
-                System.out.println("================================");
-                System.out.println("1. Treasure Hunt");
-                System.out.println("2. Quiz Battle");
-                System.out.println("3. Zombie Survival");
-                System.out.println("4. Snake & Ladder");
-                System.out.println("5. Exit");
-                System.out.print("Enter your choice: ");
-
-                int choice = sc.nextInt();
-
-                switch (choice) {
-
-                    case 1:
-                        System.out.println("Treasure Hunt - Coming Soon!");
-                        break;
-
-                    case 2:
-                        QuizService quiz = new QuizService();
-                        quiz.startGame();
-                        break;
-
-                    case 3:
-                        System.out.println("Zombie Survival - Coming Soon!");
-                        break;
-
-                    case 4:
-                        System.out.println("Snake & Ladder - Coming Soon!");
-                        break;
-
-                    case 5:
-                        System.out.println("Thank you for playing!");
-                        System.exit(0);
-                        break;
-
-                    default:
-                        System.out.println("Invalid Menu Choice!");
-
-                }
-
-            } catch (InputMismatchException e) {
-
-                System.out.println("Please enter numbers only.");
-                sc.nextLine(); // Clear invalid input
-
+        Game[] games = {new TreasureService(), new QuizService(), new ZombieService(), new SnakeLadderService()};
+        try {
+            while (true) {
+                System.out.println("\n================================\n     JAVA GAME COLLECTION\n================================");
+                System.out.println("1. Treasure Hunt\n2. Quiz Battle\n3. Zombie Survival\n4. Snake & Ladder\n5. Exit");
+                int choice = input.readInt("Enter your choice: ", 1, 5);
+                if (choice == 5) break;
+                games[choice - 1].startGame(); // Polymorphism: every game implements Game.
             }
-
+        } catch (ConsoleInput.EndOfInput e) {
+            System.out.println("\nInput closed. Ending the session.");
         }
-
+        System.out.println("Thank you for playing!");
     }
 }

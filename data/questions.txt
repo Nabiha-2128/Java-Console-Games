@@ -1,9 +1,16 @@
-Who developed Java?|A) Microsoft|B) Sun Microsystems|C) Apple|D) Google|B
-
-Which keyword is used to access parent class variables and methods in Java?|A) this|B) parent|C) extends|D) super|D
-
-What is the latest Java LTS version?|A) Java 21|B) Java 17|C) Java 22|D) Java 8|A
-
-What is a String in Java?|A) An Interface|B) A keyword|C) A class used to store a sequence of characters|D) A primitive data type|C
-
-An interface can extend a class.|A) False|B) True|C) Depends on Java version|D) None of the above|A
+# difficulty|question|option A|option B|option C|option D|correct answer
+EASY|Who originally developed Java?|Microsoft|Sun Microsystems|Apple|Google|B
+EASY|What is a String in Java?|An interface|A keyword|A class representing character strings|A primitive type|C
+EASY|Which keyword creates an object?|new|make|class|object|A
+EASY|Which type stores true or false?|int|char|boolean|double|C
+EASY|Which method is the usual application entry point?|start()|run()|open()|main()|D
+MEDIUM|Which keyword accesses superclass members?|this|parent|extends|super|D
+MEDIUM|Can an interface extend a class?|No|Yes|Only abstract classes|Only Object|A
+MEDIUM|Which collection grows dynamically and permits duplicates?|ArrayList|HashSet|TreeSet|An array|A
+MEDIUM|Which block normally releases resources after try/catch?|throw|finally|extends|static|B
+MEDIUM|Which keyword prevents a class from being subclassed?|private|abstract|final|protected|C
+HARD|Which call starts a new Java thread?|thread.run()|thread.start()|thread.wait()|thread.sleep(1)|B
+HARD|Which keyword provides mutual exclusion on a monitor?|volatile|transient|synchronized|final|C
+HARD|Which exception is checked?|IOException|NullPointerException|ArithmeticException|IllegalArgumentException|A
+HARD|What does try-with-resources require a resource to implement?|Runnable|Serializable|Comparable|AutoCloseable|D
+HARD|Which declaration allows runtime method overriding?|A non-final instance method|A static method|A private method|A final method|A
